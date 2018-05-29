@@ -1,0 +1,40 @@
+import random
+
+def genrate(a):     # To generate a new string to check
+    alphabet = 'abcdefghijklmnopqrstuvwxyz '
+    #find the length of Input String
+    n = len(a)
+    res=""
+    for i in range(n):
+        res = res + alphabet[random.randrange(27)]
+    return res
+        
+    
+def check(goal,test):  # To check the similarity with given string and return number of matching positions
+    if goal == test:
+        print('Generated string: ' + test)
+        print('Goal string: ' + goal)
+        print('string match')
+        return len(test)
+    else:
+        n = len(test)
+        score = 0
+        for pos in range(n):
+            if goal[pos] == test[pos]:
+                score += 1
+        return score
+
+    
+def main_func(s):   # To generate and check untill it matchs, print every 1000th attempt and count total number of attempt.
+    goal = s
+    score = 0
+    while score != len(goal)
+        new_str = genrate(goal)
+        score = check(goal,new_str) 
+    return new_str
+
+
+
+shakespeareSaid = input('Enter the string that you want to check:')
+monkeySaid = main_func(shakespeareSaid)
+print(monkeysaid)
