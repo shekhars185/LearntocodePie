@@ -25,9 +25,12 @@ def fill_grid(a):
         for index in range(1,10,1):
             key = d + str(index)
             a[key] = rname[index -1]
-    print(a)
-        
-        
-        
+
+def get_blanks(a):
+   # blanks = [key for key, value in a.iteritems() if value == 0][0]
+    return blanks
+    
 su = create_grid()
 fill_grid(su)
+c = get_blanks(su)
+print(c)
