@@ -1,0 +1,23 @@
+def create_grid():
+    grid = {}
+    row = 'ABCDEFGHI'
+    row = list(row) 
+    col = 9
+    for R in row:
+        for c in range(col):
+            d = str(R)+str(c)
+            grid[d] = ''
+    return grid
+
+def fill_grid(a):
+    row = 'ABCDEFGHI'
+    row = list(row)
+    for num in range(1,10,1):
+        print("For row {} :".format(num))
+        rname =str(row[num-1])
+        rstring = input('Enter the values,0 for blank space: ')
+        rname = list(rstring)
+        print(rname)
+        
+su = create_grid()
+fill_grid(su)
