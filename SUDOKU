@@ -5,7 +5,8 @@ def create_grid():
     col = 9
     for R in row:
         for c in range(col):
-            d = str(R)+str(c)
+            e = c+1
+            d = str(R)+str(e)
             grid[d] = ''
     return grid
 
@@ -16,8 +17,17 @@ def fill_grid(a):
         print("For row {} :".format(num))
         rname =str(row[num-1])
         rstring = input('Enter the values,0 for blank space: ')
+        if len(rstring) != 9:
+            print('Invalid input,check number of terms and blanks')
+            rstring = input('Enter the values,0 for blank space: ')
         rname = list(rstring)
-        print(rname)
+        d = str(row[num-1])
+        for index in range(1,10,1):
+            key = d + str(index)
+            a[key] = rname[index -1]
+    print(a)
+        
+        
         
 su = create_grid()
 fill_grid(su)
