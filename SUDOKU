@@ -1,14 +1,60 @@
+from typing import Set, Any
+
+
 def create_grid():
     grid = {}
     row = 'ABCDEFGHI'
-    row = list(row) 
+    row = list(row)
     col = 9
     for R in row:
+
         for c in range(col):
             e = c+1
             d = str(R)+str(e)
             grid[d] = ''
     return grid
+
+
+def gen_subgrid():
+    row = 'ABCDEFGHI'
+    row = list(row)
+    col =10
+    subgrid1 = []
+    subgrid2 = []
+    subgrid3 = []
+    subgrid4 = []
+    subgrid5 = []
+    subgrid6 = []
+    subgrid7 = []
+    subgrid8 = []
+    subgrid9 = []
+    for R in row:
+         for c in range(1,col):
+             d = str(R)+str(c)
+             if row.index(R) < 3:
+                 if c < 4:
+                    subgrid1.append(d)
+                 elif c < 7 and c > 3:
+                    subgrid2.append(d)
+                 else:
+                     subgrid3.append(d)
+             elif row.index(R) < 7 and row.index(R) > 3:
+                 if c < 4:
+                     subgrid4.append(d)
+                 elif c <7 and c > 3:
+                     subgrid5.append(d)
+                 else:
+                     subgrid6.append(d)
+             else:
+                if c < 4:
+                     subgrid7.append(d)
+                elif c <7 and c >3:
+                     subgrid8.append(d)
+                else:
+                    subgrid9.append(d)
+    subgrid =[subgrid1,subgrid2,subgrid3,subgrid4,subgrid5,subgrid6,subgrid7,subgrid8,subgrid9]
+    return subgrid
+
 
 def fill_grid(a):
     row = 'ABCDEFGHI'
@@ -17,7 +63,7 @@ def fill_grid(a):
         print("For row {} :".format(num))
         rname =str(row[num-1])
         rstring = input('Enter the values,0 for blank space: ')
-        if len(rstring) != 9:
+        while len(rstring) != 9:
             print('Invalid input,check number of terms and blanks')
             rstring = input('Enter the values,0 for blank space: ')
         rname = list(rstring)
@@ -25,12 +71,102 @@ def fill_grid(a):
         for index in range(1,10,1):
             key = d + str(index)
             a[key] = rname[index -1]
+    #return a
 
 def get_blanks(a):
-   # blanks = [key for key, value in a.iteritems() if value == 0][0]
+    #b ={}
+    #b = a
+    blanks = [key for key,value in a.items() if value == '0']
     return blanks
-    
+
+def check_row(r,grid):
+    l = 10
+    numset = {'1','2','3','4','5','6','7','8','9'}
+    pset = set()
+    aset = set()
+    for i in range(1,l):
+        e = str(i)
+        key = r + e
+        if grid[key] in numset:
+            #append the set of numbers present
+            pset.add(grid[key])
+    aset = numset - pset
+    return aset
+
+def check_col(c,grid):
+    r = ['A','B','C','D','E','F','G','H','I']
+    numset = {'1','2','3','4','5','6','7','8','9'}
+    pset = set()
+    aset = set()
+    for d in r:
+        key = str(d)+c
+        if grid[key] in numset:
+            pset.add(grid[key])
+
+    aset = numset - pset
+    return aset
+
+def check_subgrid(key,grid):
+     numset = {'1','2','3','4','5','6','7','8','9'}
+     pset = set()
+     aset = set()
+     c = gen_subgrid()
+     #print(c)
+     pos = []
+     if key in c[0]:
+         pos = c[0]
+     elif key in c[1]:
+         pos = c[1]
+     elif key in c[2]:
+         pos = c[2]
+     elif key in c[3]:
+         pos = c[3]
+     elif key in c[4]:
+         pos = c[4]
+     elif key in c[5]:
+         pos = c[5]
+     elif key in c[6]:
+         pos = c[6]
+     elif key in c[7]:
+         pos = c[7]
+     elif key in c[8]:
+         pos = c[8]
+
+     for key1 in pos:
+         if grid[key] in numset:
+             pset.add(grid[key])
+
+     aset = numset - pset
+     return aset
+
+def get_options(b,option,grid):
+    key = str(b)
+    opt = set()  # type: initiazle a set to hold final get_options()
+    rname = key[0]
+    cname = key[1]
+    rmiss = check_row(rname,grid)
+    cmiss = check_col(cname,grid)
+    gmiss = check_subgrid(key,grid)
+    #opt = gmiss & (cmiss & rmiss)
+    opt = gmiss.intersection(cmiss.intersection(rmiss))
+    return opt
+
+972
+
+gen_subgrid()
 su = create_grid()
 fill_grid(su)
+print(su)
 c = get_blanks(su)
-print(c)
+opt = set()
+for blank in c:
+    d = set()
+    d = get_options(blank,opt,su)
+    print(blank)
+    print(d)
+
+
+
+
+
+
