@@ -1,6 +1,3 @@
-from typing import Set, Any
-
-
 def create_grid():
     grid = {}
     row = 'ABCDEFGHI'
@@ -150,23 +147,22 @@ def get_options(b,option,grid):
     #opt = gmiss & (cmiss & rmiss)
     opt = gmiss.intersection(cmiss.intersection(rmiss))
     return opt
-
-972
-
+    
+    
 gen_subgrid()
 su = create_grid()
 fill_grid(su)
-print(su)
-c = get_blanks(su)
+c= get_blank(su)
 opt = set()
-for blank in c:
-    d = set()
-    d = get_options(blank,opt,su)
-    print(blank)
-    print(d)
+while c != []
+    for blank in c:
+        d = set()
+        d = get_options(blank,opt,su)
+        if len(d) == 1:
+            e = list(d)
+            grid[blank] = e[0]
+    c = get_blank(su)
 
-
-
-
-
-
+print(su)
+    
+    
