@@ -147,22 +147,54 @@ def get_options(b,option,grid):
     #opt = gmiss & (cmiss & rmiss)
     opt = gmiss.intersection(cmiss.intersection(rmiss))
     return opt
-    
-    
+
+
 gen_subgrid()
 su = create_grid()
 fill_grid(su)
-c= get_blank(su)
+c= get_blanks(su)
 opt = set()
-while c != []
+fill= []
+min = 9
+exit_processing = False
+while exit_processing is False:
+    single_element = False
     for blank in c:
         d = set()
         d = get_options(blank,opt,su)
+        ordrlst= []
         if len(d) == 1:
-            e = list(d)
-            grid[blank] = e[0]
-    c = get_blank(su)
+            print(" Updating %s" %blank)
+            su[blank] = d
+            fill.append(blank)
+            single_element = True
+        else:
+            print('the slot %s has options' %blank)
+            print(d)
+            print('min value latest is : %d' %min)
+            if len(d) < min:        # if number of elements to be processed is less than  in first iteration
+                min = len(d)
+                ordrlst.append(blank)
+    print('Checking if we have no clear value')
+    print(ordrlst)
+    if single_element == False: # No sure answer present.
+        emp = set()
+        if len(ordrlst) != 0:
+            keyf = ordrlst.pop()
+            avl = get_options(keyf,emp,su)
+            su[keyf] = avl(0)
+            print('Filling position %s' %keyf)
+            fill.append(keyf)
+    if c == []:
+        exit_processing = True
+    print('Want to Exit?')
+    exit_ans = input('Press Q to QUIT :')
+    if exit_ans == 'Q':
+        exit_processing = True
+    c = []
+    print('-'*8+'Updating the blanks'+'-'*8)
+    c = get_blanks(su)
+
 
 print(su)
-    
-    
+
