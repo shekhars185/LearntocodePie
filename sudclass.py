@@ -10,7 +10,7 @@ class sudoku:
         self.prefOrder = list()
         self.lastvalue = ''
         self.lastkey   = ''
-        self.wrongopt = {}
+        self.wrongopt = dict()
 
     def CreateGrid(self):
         row = self.row
@@ -152,7 +152,7 @@ class sudoku:
 
 
     def GetOptions(self,key):
-        keyst = str(key)
+        #keyst = str(key)
         options = set()
         rname = key[0]
         cname = key[1]
@@ -163,17 +163,19 @@ class sudoku:
         options = wmiss.intersection(gmiss.intersection(cmiss.intersection(rmiss)))
         return options
 
+   
 
     def UpdateWrong(self,key,value):
         # get the already exiusting list of wrong values for given spot
-        triedopt = s.wrongopt[key]
+        triedopt = self.wrongopt[key]
         if value not in triedopt:
             triedopt.append(value)
-            s.wrongspot[key] = triedopt #update the
-            print('Option %s is wrong for position %s' %key %value)
+            self.wrongopt[key] = triedopt #update the
+            print('Option %s is wrong'%value)
+            print('for position %s'%key)
 
     def CheckWrongV(self,key,value):
-        triedopt = s.wrongopt[key]
+        triedopt = self.wrongopt[key]
         if value in triedopt:
             return False
         else:
@@ -184,21 +186,20 @@ s.CreateGrid()
 s.GenSubgrid()
 s.FillGrid()
 s.GetBlanks()
-print('Blank in positions')
-print(s.blanks)
 min = 9
 ExitProcessing = False
 while ExitProcessing is False:
     SingleElement = False
     for blank in s.blanks:
         d = set()
-        print(blank)
         d = s.GetOptions(blank)
-        print(d)
         if len(d) == 1:
             print(" Updating %s"%blank)
+            print(" with Value %s" %d)
             s.grid[blank] = list(d)[0]
             s.fillOrder.append(blank)
+            print('Filled in order')
+            print(s.fillOrder)
             s.lastkey = blank
             s.lastvalue = list(d)[0]
             SingleElement = True
@@ -209,11 +210,12 @@ while ExitProcessing is False:
                 min = len(d)
                 s.prefOrder.append(blank)
     # if there are no clear value for any blanks
-    print('Any option with single choice')
+    print('Any option with single choice ?')
     print(SingleElement)
+    s.GetBlanks()  # Refresh the Blank table.
     if SingleElement == False:
         s.GetBlanks()  # Refresh the Blank table.
-        print('remianing blanks')
+        print('Remaining blanks')
         print(s.blanks)
         print('Order of filling of blanks')
         print(s.prefOrder)
@@ -245,6 +247,7 @@ while ExitProcessing is False:
                                     s.lastvalue = v
                                     s.lastkey = keyf
                                     process1 = False
+                                    s.fillOrder.append(keyf)
                    elif s.lastkey == keyf:
                         process = True
                         for v in list(avl):
@@ -255,7 +258,7 @@ while ExitProcessing is False:
                                     s.lastvalue = v
                                     s.lastkey = keyf
                                     process = False
-
+                                    s.fillOrder.append(keyf)
 
     s.GetBlanks()
     if s.blanks == []:
