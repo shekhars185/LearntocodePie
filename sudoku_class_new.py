@@ -188,7 +188,7 @@ class Sudoku:
         return options
 
     def ProcessBlank(self,key):
-        options = self.GetOptions(position)
+        options = self.GetOptions(key)
         self.options[key] = options
         self.opcount[key] = len(options)
         if len(options) == 0: # No option found
@@ -206,7 +206,8 @@ class Sudoku:
         self.fillOrder.append(key)
         self.lastvalue = key
         self.lastkey  = value
-        print('Updating Position %s with value %s' %key %value)
+        print('Updating Position %s with ' %key,end = " ")
+        print(value)
         
     def ProcessSblanks(self):
         CurrBlanks = self.cblanks
@@ -364,6 +365,8 @@ while NoBlanksLeft == False:
             s.PrintGrid()
             NoBlanksLeft = True
     else:
+        s.Getblanks()  # Update the current Blanks
+        currlist = s.cblanks
         for position in currlist:
             curoptions = s.options[position]
             for value in curoptions:
