@@ -1,28 +1,32 @@
-class sudoku:
+class Sudoku:
+
+    #initialization function
     def __init__(self):
-        self.row = list('ABCDEFGHI')
-        self.col = 10
-        self.numset = {'1','2','3','4','5','6','7','8','9'}
-        self.grid = {}
-        self.subgrid = list()
-        self.blanks=list()
-        self.fillOrder = list()
-        self.prefOrder = list()
-        self.lastvalue = ''
-        self.lastkey   = ''
-        self.wrongopt = dict()
+            self.row = list('ABCDEFGHI')
+            self.col = list(str('123456789'))
+            self.numset = {'1','2','3','4','5','6','7','8','9'}
+            self.grid = {}
+            self.subgrid = list()
+            self.iblanks = list()
+            self.cblanks = list()
+            self.fillOrder = list()
+            self.prefOrder = list()
+            self.lastvalue = ''
+            self.lastkey  = ''
+            self.wrongopt = dict()
+            self.options  = dict()
+            self.opcount   = dict()
 
     def CreateGrid(self):
         row = self.row
         col = self.col
         for R in row:
-            for c in range(1,col):
-                d = str(R)+str(c)
+            for C in col:
+                d = str(R)+str(C)
                 self.grid[d] = ''
                 self.wrongopt[d] = []
-        #return self.grid
 
-    def GenSubgrid(self):
+    def CreateSubgrid(self):
         row = self.row
         col = self.col
         subgrid = []
@@ -37,26 +41,26 @@ class sudoku:
         subgrid9 =[]
 
         for R in row:
-            for c in range(1,col):
-                d = str(R)+str(c)
+            for C in col:
+                d = str(R)+str(C)
                 if row.index(R) < 3:
-                    if c<4:
+                    if col.index(C)<3:
                         subgrid1.append(d)
-                    elif c >3 and c <7:
+                    elif col.index(C) >2 and col.index(C) <6:
                         subgrid2.append(d)
                     else:
                         subgrid3.append(d)
-                elif row.index(R) < 7 and row.index(R) >3:
-                    if c<4:
+                elif row.index(R) < 6 and row.index(R) >2:
+                    if col.index(C)<3:
                         subgrid4.append(d)
-                    elif c >3 and c <7:
+                    elif col.index(C) >2 and col.index(C) <6:
                         subgrid5.append(d)
                     else:
                         subgrid6.append(d)
                 else:
-                    if c<4:
+                    if col.index(C)<3:
                         subgrid7.append(d)
-                    elif c >3 and c <7:
+                    elif col.index(C) >2 and col.index(C) <6:
                         subgrid8.append(d)
                     else:
                         subgrid9.append(d)
@@ -66,33 +70,54 @@ class sudoku:
     def FillGrid(self):
         row = self.row
         col = self.col
-        for num in range(1,col):
-            print("for row{}".format(num))
-            rname = str(row[num-1])
-            rstring = input('Enter the values,0 for blank :')
-            while len(rstring) !=9:
-                print('Invalid Input,Check number of terms and blanks')
-                rstring = input('Enter the values,0 for blank')
-            rname = list(rstring)
-            d = str(row[num-1])
-            for index in range(1,col):
-                key = d +str(index)
-                self.grid[key] =rname[index-1]
-        print(self.grid)
-        #return self.grid
+        for R in row:
+            print(' For row %s' %R)
+            istring = input('Enter the values, Put 0 for Blank : ')
+            while len(istring) != 9:
+                print('Invalid Input for row %s'%R)
+                istring = input('Enter the values, Put 0 for Blank : ')
+            ilist = list(istring)
+            for C in col:
+                i = col.index(C)
+                d = str(R) + str(C)
+                self.grid[d] = ilist[i]
+
+
+    def PrintGrid(self):
+        row = self.row
+        col = self.col
+        for R in row:
+          #  print(" ")
+            if (row.index(R) == 0 or row.index(R) == 3 or row.index(R) == 6):
+                print('_'*24)
+            print('|',end= " ")
+            for C in col:
+                d = str(R)+str(C)
+                if col.index(C)<3:
+                   print(self.grid[d],end = " ")
+                elif col.index(C) >2 and col.index(C) <6:
+                    if col.index(C) == 3:
+                        print('|',end = " ")
+                    print(self.grid[d],end = " ")
+                else:
+                    if col.index(C) == 6:
+                        print('|',end = " ")
+                    print(self.grid[d],end = " ")
+                    if col.index(C) == 8:
+                        print('|')
+        print('_'*24)
 
     def GetBlanks(self):
         dict = self.grid
-        self.blanks=[key for key,value in dict.items() if value == '0']
+        self.cblanks=[key for key,value in dict.items() if value == '0']
         #return self.blanks
 
     def CheckRow(self,row):
         col = self.col
         pset = set()
         aset = set()
-        for i in range(1,col):
-            c = str(i)
-            key = row+c
+        for i in col:
+            key = row+i
             if self.grid[key] in self.numset:
                 pset.add(self.grid[key])
         aset = self.numset - pset
@@ -139,7 +164,6 @@ class sudoku:
         aset = self.numset - pset
         return aset
 
-
     def CheckWrong(self,key):
         #eliminate wrong options.return valid options
         wopt = s.wrongopt[key]
@@ -149,7 +173,6 @@ class sudoku:
             pset.add(v)
         aset = self.numset - pset
         return aset
-
 
     def GetOptions(self,key):
         #keyst = str(key)
@@ -161,12 +184,45 @@ class sudoku:
         gmiss = self.CheckSubgrid(key)
         wmiss = self.CheckWrong(key)
         options = wmiss.intersection(gmiss.intersection(cmiss.intersection(rmiss)))
+        options = list(options)
         return options
 
-   
+    def ProcessBlank(self,key):
+        options = self.GetOptions(key)
+        self.options[key] = options
+        self.opcount[key] = len(options)
+        if len(options) == 0: # No option found
+            print(" No options found for position:%s"%key)
+
+
+    def ProcessBlanks(self):
+        blist = self.cblanks
+        for position in blist:
+            self.ProcessBlank(position)
+
+
+    def FillPosition(self,key,value):
+        self.grid[key] = value
+        self.fillOrder.append(key)
+        self.lastvalue = key
+        self.lastkey  = value
+        print('Updating Position %s with ' %key,end = " ")
+        print(value)
+
+    def ProcessSblanks(self):
+        CurrBlanks = self.cblanks
+        CurrBlanks.sort()
+        for blank in CurrBlanks:
+            SingleOptFlag = False
+            if self.opcount[blank] == 1:
+               #fill the grid
+               self.FillPosition(blank,self.options[blank][0])
+               self.grid[blank] = self.options[blank][0]
+               SingleOptFlag = True
+        return SingleOptFlag
 
     def UpdateWrong(self,key,value):
-        # get the already exiusting list of wrong values for given spot
+        # get the already existing list of wrong values for given spot
         triedopt = self.wrongopt[key]
         if value not in triedopt:
             triedopt.append(value)
@@ -174,107 +230,173 @@ class sudoku:
             print('Option %s is wrong'%value)
             print('for position %s'%key)
 
-    def CheckWrongV(self,key,value):
-        triedopt = self.wrongopt[key]
-        if value in triedopt:
-            return False
+    def RemoveValue(self,key):
+        #remove value only if it was part of initial blank.
+        if key not in self.iblanks:
+            self.grid[key] = '0'
+            print('Removing value from position %s'%key)
+
+    def RowContradiction(self,row,value):
+        col = self.col
+        conposition = list()
+        RowContradiction = False
+        count = 0
+        for c in col:
+            key = str(row)+str(c)
+            if self.grid[key] == value:
+                count += 1
+                conposition.append(key)
+        if (count == 0 or count == 1):
+            RowContradiction = False
         else:
-            return True
+            RowContradiction = True
 
-s = sudoku()
+  #      if RowContradiction:
+  #          for p in conposition:
+  #             if p not in self.iblanks:
+  #                  self.RemoveValue(p)
+  #                    self.UpdateWrong(p,value)
+        return RowContradiction
+
+    def ColContradiction(self,col,value):
+        row = self.row
+        conposition = list()
+        ColContradiction = False
+        count = 0
+        for r in row:
+            key = str(r) + str(col)
+            if self.grid[key] == value:
+                count += 1
+                conposition.append(key)
+        if (count == 0 or count == 1):
+            ColContradiction = False
+        else:
+            ColContradiction = True
+
+#        if ColContradiction:
+#            for p in conposition:
+#                if p not in self.iblanks:
+#                    self.RemoveValue(p)
+#                    self.UpdateWrong(p,value)
+        return ColContradiction
+
+
+    def GridContradiction(self,key,value):
+        pos = []
+        conposition= list()
+        GridContradiction = False
+        if key in self.subgrid[0]:
+            pos = self.subgrid[0]
+        elif key in self.subgrid[1]:
+            pos = self.subgrid[1]
+        elif key in self.subgrid[2]:
+            pos = self.subgrid[2]
+        elif key in self.subgrid[3]:
+            pos = self.subgrid[3]
+        elif key in self.subgrid[4]:
+            pos = self.subgrid[4]
+        elif key in self.subgrid[5]:
+            pos = self.subgrid[5]
+        elif key in self.subgrid[6]:
+            pos = self.subgrid[6]
+        elif key in self.subgrid[7]:
+            pos = self.subgrid[7]
+        elif key in self.subgrid[8]:
+            pos = self.subgrid[8]
+        count = 0
+        for p in pos:
+            if self.grid[p] == value:
+                count += 1
+                conposition.append(key)
+        if (count == 0):
+            GridContradiction = False
+        else:
+            GridContradiction = True
+
+#        if GridContradiction:
+#            for p in conposition:
+#                if p not in self.iblanks:
+#                    self.RemoveValue(p)
+#                    self.UpdateWrong(p,value)
+        return GridContradiction
+
+    def CheckGrid(self,key,value):
+        row = key[0]
+        col = key[1]
+        #Check for Row contradiction
+        RC = self.RowContradiction(row,value)
+        if not RC:
+            CC = self.ColContradiction(col,value)
+            if not CC:
+                GC = self.GridContradiction(key,value)
+                if not GC:
+                    #Fill the grid with key ,value and check if that leads to issue
+                    self.grid[key] = value
+                    #remove the key value from list of c.blanks
+                    self.cblanks.remove(key)
+                    #get blanks
+                    self.ProcessBlanks()
+                    #check if there are any elements that have 0 values
+                    chkdict = dict()
+                    chkdict = self.opcount
+                    blnklist= [key for key,value in chkdict.items() if value == 0]
+                    if blnklist == []:  # no blank with 0 options
+                        self.grid[key] = '0'
+                        self.cblanks.append(key)
+                        return True
+                    else:
+                        self.grid[key] = '0'
+                        self.cblanks.append(key)
+                        return False
+
+#1. Create Grid and Subgrid.
+s = Sudoku()
 s.CreateGrid()
-s.GenSubgrid()
+s.CreateSubgrid()
+# Fill Grid
 s.FillGrid()
+s.PrintGrid()
+#2. Find out Blank Positions.
 s.GetBlanks()
-min = 9
-ExitProcessing = False
-while ExitProcessing is False:
-    SingleElement = False
-    for blank in s.blanks:
-        d = set()
-        d = s.GetOptions(blank)
-        if len(d) == 1:
-            print(" Updating %s"%blank)
-            print(" with Value %s" %d)
-            s.grid[blank] = list(d)[0]
-            s.fillOrder.append(blank)
-            print('Filled in order')
-            print(s.fillOrder)
-            s.lastkey = blank
-            s.lastvalue = list(d)[0]
-            SingleElement = True
-        elif len(d) > 1: #When There are Multiple possible options.
-            print('Slot %s has multiple options:' %blank)
-            print(d)
-            if len(d)<min:
-                min = len(d)
-                s.prefOrder.append(blank)
-    # if there are no clear value for any blanks
-    print('Any option with single choice ?')
-    print(SingleElement)
-    s.GetBlanks()  # Refresh the Blank table.
-    if SingleElement == False:
-        s.GetBlanks()  # Refresh the Blank table.
-        print('Remaining blanks')
-        print(s.blanks)
-        print('Order of filling of blanks')
-        print(s.prefOrder)
-        if len(s.prefOrder) != 0:
-            keyf = s.prefOrder.pop()   # get the key with minimum number of options
-            if keyf in s.blanks:
-                avl = s.GetOptions(keyf)
-                if avl == None: # No option available for the Blank
-                   #Remove the last filled value
-                   #Pop the key from FillOrder
-                   keyl = s.fillOrder.pop()
-                   s.lastkey = keyl
-                   s.lastvalue= s.grid[keyl]
-                   s.grid[keyl] = '0'
-                   s.GetBlanks()
-                   # regenerate the list of blanks
-                   #update the wrong value dictionary structure
-                   s.UpdateWrong(s.lastkey,s.lastvalue)
-                   avl = s.GetOptions(keyf)
-                else: # Multiple options available
-                   # We are not trying to fill the same grid position
-                   if s.lastkey != keyf:
-                        process1 = True
-                        for v in list(avl):
-                            if process1 == True:
-                                check = s.CheckWrongV(keyf,v)
-                                if check :
-                                    s.grid[keyf] = v
-                                    s.lastvalue = v
-                                    s.lastkey = keyf
-                                    process1 = False
-                                    s.fillOrder.append(keyf)
-                   elif s.lastkey == keyf:
-                        process = True
-                        for v in list(avl):
-                            if v != s.lastvalue and process == True:
-                                check = s.CheckWrongV(keyf,v)
-                                if check :
-                                    s.grid[keyf] = v
-                                    s.lastvalue = v
-                                    s.lastkey = keyf
-                                    process = False
-                                    s.fillOrder.append(keyf)
+print('Blank positions :', end = " ")
+print(s.cblanks)
+s.ibanks = s.cblanks
+if s.cblanks != []:
+    NoBlanksLeft = False
+else:
+#3. Get Available options for Each given blank
+    NoBlanksLeft = True
 
-    s.GetBlanks()
-    if s.blanks == []:
-        ExitProcessing = True
+while NoBlanksLeft == False:
+    print('Processing Blanks--->')
+    s.ProcessBlanks()
+#4. Fill the positions with only one possible option, update the Fill order
+    d = s.ProcessSblanks()
+    s.GetBlanks()  # Update the current Blanks
+    currlist = s.cblanks
+    if not d:
+        s.ProcessBlanks()
+        if currlist == []:#no blanks
+            print('All positions filled')
+            s.PrintGrid()
+            NoBlanksLeft = True
     else:
-        Q = input('Press Q to Exit program')
-        if Q == 'Q' or Q == 'q':
-            ExitProcessing = True
+        for position in currlist:
+            curoptions = s.options[position]
+            for value in curoptions:
+                if s.CheckGrid(position,value):
+                    s.FillPosition(position,value)
+                    break
+                #check if the current config of Grid creates any exceptions.
+                else:
+                    s.UpdateWrong(position,value)
+#6. Re-genrate the blanks and repeat the process till all the blanks are filled.
+    s.GetBlanks()
+    s.PrintGrid()
+    Q = input('Press Q to Quit processing else press any other key for Continuing')
+    if Q == 'Q':
+        NoBlanksLeft = True
+    if s.cblanks == []:
+        NoBlanksLeft = True
 
-
-print('Final Grid')
-print(s.grid)
-
-
-
-
-
-
-
+        
